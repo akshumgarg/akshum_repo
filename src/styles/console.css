@@ -1,0 +1,154 @@
+/* Full-screen box. The console is centered in it and scaled. */
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background: #1a1a22;
+}
+
+.console {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 380px;
+  height: 640px;
+  background: #cfcab8;
+  border-radius: 14px 14px 70px 14px; /* bigger bottom-right curve */
+  box-shadow: inset 0 0 0 3px #e2ddcb, 0 12px 40px rgba(0, 0, 0, 0.6);
+  font-family: 'Press Start 2P', monospace;
+  user-select: none;
+  /* the transform is set inline: translate(-50%, -50%) scale(n) */
+}
+
+.bezel {
+  position: absolute;
+  left: 30px;
+  top: 28px;
+  width: 320px;
+  height: 292px;
+  padding: 20px;
+  background: #4a4a55;
+  border-radius: 12px 12px 36px 12px;
+}
+
+.power-light {
+  position: absolute;
+  left: 14px;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d33;
+  box-shadow: 0 0 6px #d33;
+}
+
+.brand {
+  position: absolute;
+  left: 34px;
+  top: 336px;
+  font-size: 10px;
+  color: #4a4a55;
+  letter-spacing: 1px;
+}
+
+/* D-pad: two crossed rectangles, four hit buttons on top */
+.dpad { position: absolute; left: 48px; top: 410px; width: 96px; height: 96px; }
+.dpad::before, .dpad::after { content: ''; position: absolute; background: #2b2b2b; border-radius: 4px; }
+.dpad::before { left: 0; top: 32px; width: 96px; height: 32px; }
+.dpad::after { left: 32px; top: 0; width: 32px; height: 96px; }
+
+.dpad-btn {
+  position: absolute;
+  z-index: 1; /* above the cross, so clicks reach the buttons */
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  touch-action: manipulation;
+}
+.dpad-btn::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  background: #444;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%); /* little arrow */
+}
+.dpad-btn[data-dir='up']    { left: 32px; top: 0; }
+.dpad-btn[data-dir='down']  { left: 32px; top: 64px; }
+.dpad-btn[data-dir='left']  { left: 0; top: 32px; }
+.dpad-btn[data-dir='right'] { left: 64px; top: 32px; }
+.dpad-btn[data-dir='right']::after { transform: rotate(90deg); }
+.dpad-btn[data-dir='down']::after  { transform: rotate(180deg); }
+.dpad-btn[data-dir='left']::after  { transform: rotate(270deg); }
+
+/* A and B */
+.round { position: absolute; width: 52px; text-align: center; }
+.round-btn {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: #9b2b57;
+  box-shadow: 0 3px 0 #6e1d3e;
+  touch-action: manipulation;
+}
+.btn-label { display: block; margin-top: 8px; font-size: 10px; color: #4a4a55; }
+
+/* START and SELECT: tilted pills */
+.pill { position: absolute; width: 56px; text-align: center; transform: rotate(-25deg); }
+.pill-btn {
+  display: block;
+  width: 56px;
+  height: 14px;
+  border: 0;
+  border-radius: 7px;
+  background: #6b6b75;
+  box-shadow: 0 2px 0 #4a4a55;
+  touch-action: manipulation;
+}
+.pill .btn-label { font-size: 8px; margin-top: 6px; }
+
+/* Speaker lines */
+.speaker { position: absolute; right: 34px; bottom: 28px; display: flex; gap: 8px; }
+.speaker span { width: 6px; height: 46px; border-radius: 3px; background: #a5a18f; transform: rotate(28deg); }
+
+/* Pressed look (about 120 ms, set from App.jsx) */
+.round-btn.is-pressed { transform: translateY(3px); box-shadow: none; }
+.pill-btn.is-pressed { transform: translateY(2px); box-shadow: none; }
+.dpad-btn.is-pressed::after { background: #9a9a9a; }
+
+/* Link under the console */
+.plain-link {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  border: 0;
+  background: none;
+  color: #cfcab8;
+  font: 13px system-ui, sans-serif;
+  text-decoration: underline;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Phone held sideways (wider than tall and under 500px high) */
+.rotate-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a22;
+  color: #9bbc0f;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  text-align: center;
+}
+@media (orientation: landscape) and (max-height: 499px) {
+  .rotate-overlay { display: flex; }
+}

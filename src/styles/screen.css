@@ -1,0 +1,44 @@
+/* Screen: 280 x 252, padding 8, font 8px, line 12px. Colors only from variables. */
+.screen {
+  position: relative;
+  box-sizing: border-box;
+  width: 280px;
+  height: 252px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--c0);
+  color: var(--c3);
+  font-size: 8px;
+  line-height: 12px;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.35); /* depth at the edge */
+}
+
+/* Scanlines. pointer-events: none so they never block clicks. */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0 1px, transparent 1px 3px);
+}
+
+.screen-header,
+.screen-footer {
+  box-sizing: border-box;
+  height: 20px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+}
+.screen-header { border-bottom: 1px solid var(--c2); }
+.screen-footer { border-top: 1px solid var(--c2); color: var(--c2); }
+
+.screen-body {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 0;
+  overflow-wrap: anywhere; /* long links must wrap */
+}

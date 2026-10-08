@@ -1,0 +1,15 @@
+.plain {
+    height: 100dvh;
+    overflow-y: auto;
+    background: #f4f1e6;
+    color: #1a1a22;
+    font-family: system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  .plain-page { max-width: 640px; margin: 0 auto; padding: 24px 20px 64px; }
+  .plain h2 { margin: 40px 0 8px; border-bottom: 2px solid #306230; }
+  .plain h3 { margin: 24px 0 4px; }
+  .plain h4 { margin: 16px 0 2px; font-size: 0.8rem; color: #306230; }
+  .plain p { margin: 0 0 8px; overflow-wrap: anywhere; }
+  .plain a, .plain-back { color: #0f380f; text-decoration: underline; }
+  .plain-back { padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }

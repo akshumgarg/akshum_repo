@@ -1,0 +1,22 @@
+/* c0 = lightest, c3 = darkest. Set data-palette on the console element. */
+.console,
+.console[data-palette='green'] {
+  --c0: #9bbc0f;
+  --c1: #8bac0f;
+  --c2: #306230;
+  --c3: #0f380f;
+}
+
+.console[data-palette='grey'] {
+  --c0: #e0e0e0;
+  --c1: #a0a0a0;
+  --c2: #606060;
+  --c3: #101010;
+}
+
+.console[data-palette='amber'] {
+  --c0: #ffe08a;
+  --c1: #f2b84b;
+  --c2: #8a5a12;
+  --c3: #2a1800;
+}
