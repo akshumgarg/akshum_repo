@@ -1,3 +1,5 @@
+import Slices from './Slices.jsx'
+
 const DIRECTIONS = [
   { dir: 'up', label: 'Up', action: 'UP' },
   { dir: 'down', label: 'Down', action: 'DOWN' },
@@ -6,8 +8,11 @@ const DIRECTIONS = [
 ]
 
 export default function Dpad({ onPress, pressed }) {
+  // In the 3D console the whole cross tilts toward the pressed direction.
+  const tilt = DIRECTIONS.find((d) => d.action === pressed)?.dir
+
   return (
-    <div className="dpad">
+    <div className={`dpad${tilt ? ` dpad--${tilt}` : ''}`}>
       {DIRECTIONS.map(({ dir, label, action }) => (
         <button
           key={dir}
@@ -19,6 +24,7 @@ export default function Dpad({ onPress, pressed }) {
           onContextMenu={(e) => e.preventDefault()}
         />
       ))}
+      <Slices count={7} top />
     </div>
   )
 }

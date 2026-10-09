@@ -130,3 +130,36 @@
   border-radius: 4px;
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
 }
+
+/* ---------- white room ---------- */
+.stage {
+  background: radial-gradient(ellipse at 50% 38%, #ffffff 0%, #f6f6f8 55%, #e4e4ea 100%);
+}
+
+/* Floor: a faint grid lying flat under the console. It is drawn with the scene's
+   perspective, so the lines get closer together as they go away from you. */
+.scene::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(var(--h) + 34px);       /* the floor line, just under the shadow */
+  width: 2000px;
+  height: 2000px;
+  margin: -1000px 0 0 -1000px;      /* centers the floor on that line */
+  transform: rotateX(90deg);
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to right, rgba(0, 0, 0, 0.10) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.10) 0 2px, transparent 2px 90px);
+  -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 0%, rgba(0, 0, 0, 0.5) 40%, transparent 100%);
+}
+
+/* Softer shadow, because the old one was made for a dark background */
+.scene__shadow {
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.32), transparent 70%);
+}
+
+/* Text that was light-on-dark needs to be dark-on-light now */
+.plain-link { color: #4a4a55; }
+.scene__tools { color: #6a6a74; }

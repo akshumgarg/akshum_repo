@@ -1,3 +1,5 @@
+import Slices from './Slices.jsx'
+
 // Used for START and SELECT. The label is also the action name.
 export default function PillButton({ label, x, y, onPress, pressed }) {
   return (
@@ -9,6 +11,7 @@ export default function PillButton({ label, x, y, onPress, pressed }) {
         onPointerDown={() => onPress(label)}
         onContextMenu={(e) => e.preventDefault()}
       />
+      <Slices count={4} />
       <span className="btn-label">{label}</span>
     </div>
   )
