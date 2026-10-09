@@ -163,3 +163,81 @@
 /* Text that was light-on-dark needs to be dark-on-light now */
 .plain-link { color: #4a4a55; }
 .scene__tools { color: #6a6a74; }
+
+/* ================= 3D buttons without a 3D scene =================
+   The console face stays one flat layer, which phones draw reliably.
+   Each button is lifted by a few pixels. When the console turns, --tx and --ty
+   (set in Console3D.jsx) say how far. The top of the button slides over its base
+   by lift x that amount, and a trail of shadows fills the gap, so the side shows. */
+
+   @property --tx { syntax: '<number>'; inherits: true; initial-value: 0; }
+   @property --ty { syntax: '<number>'; inherits: true; initial-value: 0; }
+   
+   /* the same smooth turn as the body, so the buttons move together with it */
+   .c3d-body.is-smooth {
+     transition:
+       transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1),
+       --shade 600ms linear,
+       --tx 600ms cubic-bezier(0.2, 0.8, 0.2, 1),
+       --ty 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+   }
+   
+   /* ---------- A and B ---------- */
+   .c3d-front .round-btn,
+   .c3d-front .round-btn.is-pressed {
+     --ox: calc(var(--tx) * var(--lift) * -1);
+     --oy: calc(var(--ty) * var(--lift) * -1 + var(--drop));
+     transform: translate(calc(var(--tx) * var(--lift) * 1px), calc(var(--ty) * var(--lift) * 1px + var(--press) * 1px));
+     background: radial-gradient(circle at 35% 30%, #b9386a 0%, #9b2b57 55%, #8a2450 100%);
+     box-shadow:
+       calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #6e1d3e,
+       calc(var(--ox) * 0.4px) calc(var(--oy) * 0.4px) 0 #6e1d3e,
+       calc(var(--ox) * 0.6px) calc(var(--oy) * 0.6px) 0 #6e1d3e,
+       calc(var(--ox) * 0.8px) calc(var(--oy) * 0.8px) 0 #6e1d3e,
+       calc(var(--ox) * 1px) calc(var(--oy) * 1px) 0 #6e1d3e,
+       calc(var(--ox) * 1px + 1px) calc(var(--oy) * 1px + 3px) 5px rgba(0, 0, 0, 0.35);
+     filter: brightness(calc(1 - var(--shade)));
+   }
+   .c3d-front .round-btn { --lift: 6; --drop: 3; --press: 0; }
+   .c3d-front .round-btn.is-pressed { --lift: 2; --drop: 1; --press: 2; } /* pushed into the body */
+   
+   /* ---------- START and SELECT ----------
+      They sit in a box turned by -25deg, so the sideways trail is turned back by 25deg. */
+   .c3d-front .pill-btn,
+   .c3d-front .pill-btn.is-pressed {
+     --ux: calc(var(--tx) * 0.9063 - var(--ty) * 0.4226);
+     --uy: calc(var(--tx) * 0.4226 + var(--ty) * 0.9063);
+     --ox: calc(var(--ux) * var(--lift) * -1);
+     --oy: calc(var(--uy) * var(--lift) * -1 + var(--drop));
+     transform: translate(calc(var(--ux) * var(--lift) * 1px), calc(var(--uy) * var(--lift) * 1px + var(--press) * 1px));
+     background: linear-gradient(#7d7d88, #6b6b75);
+     box-shadow:
+       calc(var(--ox) * 0.25px) calc(var(--oy) * 0.25px) 0 #4a4a55,
+       calc(var(--ox) * 0.5px) calc(var(--oy) * 0.5px) 0 #4a4a55,
+       calc(var(--ox) * 0.75px) calc(var(--oy) * 0.75px) 0 #4a4a55,
+       calc(var(--ox) * 1px) calc(var(--oy) * 1px) 0 #4a4a55,
+       calc(var(--ox) * 1px + 1px) calc(var(--oy) * 1px + 3px) 4px rgba(0, 0, 0, 0.35);
+     filter: brightness(calc(1 - var(--shade)));
+   }
+   .c3d-front .pill-btn { --lift: 4; --drop: 2; --press: 0; }
+   .c3d-front .pill-btn.is-pressed { --lift: 1.5; --drop: 0.5; --press: 1.5; }
+   
+   /* ---------- D-pad: the whole cross is lifted ----------
+      Chained drop-shadows follow the shape of the cross (both bars together). */
+   .c3d-front .dpad {
+     --lift: 6;
+     --drop: 3;
+     --press: 0;
+     --ox: calc(var(--tx) * var(--lift) * -1);
+     --oy: calc(var(--ty) * var(--lift) * -1 + var(--drop));
+     transform: translate(calc(var(--tx) * var(--lift) * 1px), calc(var(--ty) * var(--lift) * 1px + var(--press) * 1px));
+     filter:
+       drop-shadow(calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #0b0b0b)
+       drop-shadow(calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #0b0b0b)
+       drop-shadow(calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #0b0b0b)
+       drop-shadow(calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #0b0b0b)
+       drop-shadow(calc(var(--ox) * 0.2px) calc(var(--oy) * 0.2px) 0 #0b0b0b)
+       drop-shadow(1px 3px 3px rgba(0, 0, 0, 0.35))
+       brightness(calc(1 - var(--shade)));
+   }
+   .c3d-front .dpad:has(.is-pressed) { --lift: 3; --drop: 1; --press: 2; } /* the whole cross presses in */

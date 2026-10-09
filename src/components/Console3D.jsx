@@ -13,11 +13,16 @@ const MAX_TILT = 40  // how far you can tilt up and down (degrees)
 const SLICE_Z = Array.from({ length: SLICES }, (_, i) => -DEPTH / 2 + ((i + 1) * DEPTH) / (SLICES + 1))
 
 // Puts the angles on the element. smooth = move with an animation.
+// Puts the angles on the element. smooth = move with an animation.
 function paint(el, angles, smooth) {
+  const rad = (deg) => (deg * Math.PI) / 180
   el.classList.toggle('is-smooth', smooth)
   el.style.transform = `rotateX(${angles.rx}deg) rotateY(${angles.ry}deg)`
   // seen from the side it gets darker, like real light and shade
-  el.style.setProperty('--shade', (Math.abs(Math.sin((angles.ry * Math.PI) / 180)) * 0.45).toFixed(2))
+  el.style.setProperty('--shade', (Math.abs(Math.sin(rad(angles.ry))) * 0.45).toFixed(2))
+  // how far the front is turned sideways and up/down (-1 to 1): the buttons use this to show their sides
+  el.style.setProperty('--tx', Math.sin(rad(angles.ry)).toFixed(3))
+  el.style.setProperty('--ty', (-Math.sin(rad(angles.rx))).toFixed(3))
 }
 
 export default function Console3D({ children }) {

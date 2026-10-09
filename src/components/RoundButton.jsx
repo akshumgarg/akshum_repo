@@ -1,5 +1,3 @@
-import Slices from './Slices.jsx'
-
 // Used for A and B. The label is also the action name.
 export default function RoundButton({ label, x, y, onPress, pressed }) {
   return (
@@ -11,7 +9,6 @@ export default function RoundButton({ label, x, y, onPress, pressed }) {
         onPointerDown={() => onPress(label)}
         onContextMenu={(e) => e.preventDefault()}
       />
-      <Slices count={6} />
       <span className="btn-label">{label}</span>
     </div>
   )
