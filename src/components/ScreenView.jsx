@@ -5,6 +5,8 @@ import Boot from '../screens/Boot.jsx'
 import ListScreen from '../screens/ListScreen.jsx'
 import PagesScreen from '../screens/PagesScreen.jsx'
 import { screenRules, linkForA } from '../state/screenRules.js'
+import Mascot from '../mascot/Mascot.jsx'
+import { getMascot } from '../state/getMascot.js'
 
 function Message({ text }) {
   return (
@@ -41,11 +43,15 @@ export default function ScreenView({ state }) {
     )
   }
 
+  // NEW: which mood and line to show for this page (or null = no character)
+  const info = getMascot(top, state.page, state.cursors[top.id] ?? 0, state.settings)
+  const strip = info ? <Mascot layout="strip" {...info} /> : null
+
   if (rule.kind === 'list') {
     const items = rule.getItems(top.params, state.settings)
     const cursor = state.cursors[top.id] ?? 0
     return (
-      <ScreenFrame title={rule.title} footer={<Hint items={listHint(top.id)} />}>
+      <ScreenFrame title={rule.title} footer={<Hint items={listHint(top.id)} />} mascot={strip}>
         <ListScreen items={items} cursor={cursor} />
       </ScreenFrame>
     )
@@ -57,7 +63,7 @@ export default function ScreenView({ state }) {
     const hint = hasLink ? [['A', 'GO'], ['B', 'BACK']] : back
     const counter = pages.length > 0 ? `< ${state.page + 1}/${pages.length} >` : null
     return (
-      <ScreenFrame title={rule.title} footer={<Hint items={hint} center={counter} />}>
+      <ScreenFrame title={rule.title} footer={<Hint items={hint} center={counter} />} mascot={strip}>
         <PagesScreen page={pages[state.page]} index={state.page} />
       </ScreenFrame>
     )

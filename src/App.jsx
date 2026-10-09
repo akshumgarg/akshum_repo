@@ -13,6 +13,8 @@ import { initialState } from './state/initialState.js'
 import { linkForA } from './state/screenRules.js'
 import { loadSettings, saveSettings } from './state/settingsStorage.js'
 import { playSound, soundForAction } from './audio/sound.js'
+import './styles/console3d.css'
+import Console3D from './components/Console3D.jsx'
 
 const PRESSED_MS = 120
 
@@ -73,14 +75,18 @@ export default function App() {
 
   return (
     <div className="stage">
-      <Console
-        palette={state.settings.palette}
-        scale={scale}
-        onPress={press}
-        pressed={pressed}
-      >
-        <ScreenView state={state} />
-      </Console>
+      <div className="scene-holder" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+  <Console3D>
+    <Console
+      palette={state.settings.palette}
+      scale={1}
+      onPress={press}
+      pressed={pressed}
+    >
+      <ScreenView state={state} />
+    </Console>
+  </Console3D>
+</div>
 
       <button type="button" className="plain-link" onClick={() => dispatch('SHOW_PLAIN')}>
         Skip game: plain view

@@ -1,0 +1,119 @@
+/* Lets the shade change smoothly together with the turn */
+@property --shade { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+.scene {
+  /* sizes: keep the same as your console (console.css) */
+  --w: 380px; --h: 640px; --depth: 36px;
+  --r: 18px; --r-big: 70px;                 /* small corners, big bottom-right corner */
+  --shell: #cfcab8; --shell-side: #b3ae9b; --shell-back: #c4bfad;
+
+  position: relative; width: var(--w); height: var(--h);
+  perspective: 1800px;
+  touch-action: none; user-select: none; cursor: grab;
+}
+.scene.is-dragging { cursor: grabbing; }
+
+/* soft floor shadow, it does not turn with the console */
+.scene__shadow {
+  position: absolute; left: 12%; right: 12%; bottom: -34px; height: 28px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.5), transparent 70%);
+  filter: blur(5px); animation: c3d-shadow 5s ease-in-out infinite;
+}
+
+.c3d-float { position: absolute; inset: 0; transform-style: preserve-3d; animation: c3d-bob 5s ease-in-out infinite; }
+.c3d-body  { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; --shade: 0; }
+.c3d-body.is-smooth { transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1), --shade 600ms linear; }
+
+/* ---------- body: thin layers with the same rounded shape ---------- */
+.c3d-slice {
+  position: absolute; inset: 0; background: var(--shell-side);
+  border-radius: var(--r) var(--r) var(--r-big) var(--r);
+}
+
+/* ---------- flat walls on the straight parts of the edge ---------- */
+.c3d-wall { position: absolute; background: var(--shell-side); backface-visibility: hidden; }   /* one-sided: only the outside shows */
+.c3d-wall--left, .c3d-wall--right { width: var(--depth); transform-origin: left center; }
+.c3d-wall--left  { transform: translateZ(calc(var(--depth) / -2)) rotateY(-90deg); }
+.c3d-wall--right { transform: translateZ(calc(var(--depth) / 2)) rotateY(90deg); }
+.c3d-wall--left  { left: 0;    top: var(--r); height: calc(var(--h) - var(--r) * 2); }
+.c3d-wall--right { left: 100%; top: var(--r); height: calc(var(--h) - var(--r) - var(--r-big)); }
+.c3d-wall--top, .c3d-wall--bottom { height: var(--depth); transform-origin: center top; }
+.c3d-wall--top    { transform: translateZ(calc(var(--depth) / -2)) rotateX(90deg); }
+.c3d-wall--bottom { transform: translateZ(calc(var(--depth) / 2)) rotateX(-90deg); }
+.c3d-wall--top    { top: 0;    left: var(--r); width: calc(var(--w) - var(--r) * 2); }
+.c3d-wall--bottom { top: 100%; left: var(--r); width: calc(var(--w) - var(--r) - var(--r-big)); }
+
+/* ---------- front: your normal console ---------- */
+.c3d-front {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  transform: translateZ(calc(var(--depth) / 2));
+}
+.c3d-front::after {            /* shade layer, never blocks clicks */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: #000; opacity: var(--shade);
+  border-radius: var(--r) var(--r) var(--r-big) var(--r);
+}
+
+/* ---------- back ---------- */
+.c3d-back {
+  position: absolute; inset: 0; backface-visibility: hidden; overflow: hidden;
+  transform: rotateY(180deg) translateZ(calc(var(--depth) / 2));
+  background: var(--shell-back);
+  /* mirrored: its bottom-left is the real bottom-right */
+  border-radius: var(--r) var(--r) var(--r) var(--r-big);
+  font-family: 'Press Start 2P', monospace; color: #3b3b4a; text-align: center;
+}
+.c3d-back::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: #000; opacity: var(--shade);
+}
+.back__label {
+  position: absolute; left: 50%; top: 92px; transform: translateX(-50%);
+  white-space: nowrap; font-size: 20px; letter-spacing: 2px;
+  text-shadow: 1px 1px 0 #f4f0e2, -1px -1px 0 rgba(0,0,0,0.25);   /* looks pressed into the plastic */
+}
+.back__sub { position: absolute; left: 0; right: 0; top: 130px; font-size: 8px; letter-spacing: 1px; color: #6a6a78; }
+.back__battery {
+  position: absolute; left: 50%; top: 220px; width: 230px; height: 250px; transform: translateX(-50%);
+  background: var(--shell-side); border-radius: 14px;
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,0.35), inset -2px -2px 0 rgba(0,0,0,0.25), 0 0 0 3px rgba(0,0,0,0.12);
+}
+.back__notch { position: absolute; left: 50%; top: 14px; width: 54px; height: 14px; margin-left: -27px; border-radius: 8px; background: rgba(0,0,0,0.25); }
+.back__lines { position: absolute; left: 24px; right: 24px; top: 56px; }
+.back__lines i { display: block; height: 3px; margin-bottom: 16px; background: rgba(0,0,0,0.18); border-radius: 2px; }
+.back__text { position: absolute; left: 0; right: 0; bottom: 18px; font-size: 7px; color: #6a6a78; }
+.back__small { position: absolute; left: 0; right: 0; bottom: 36px; font-size: 7px; color: #7a7a86; }
+.back__grip { position: absolute; top: 150px; bottom: 90px; width: 22px;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.16) 0 3px, transparent 3px 9px); }
+.back__grip--left { left: 18px; } .back__grip--right { right: 18px; }
+.back__screw { position: absolute; width: 14px; height: 14px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e9e5d6, #8f8b7b);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.3); }
+.back__screw::after { content: ""; position: absolute; left: 2px; right: 2px; top: 6px; height: 2px; background: rgba(0,0,0,0.5); transform: rotate(35deg); }
+.back__screw--tl { left: 20px; top: 20px; } .back__screw--tr { right: 20px; top: 20px; }
+.back__screw--bl { left: 20px; bottom: 20px; } .back__screw--br { right: 20px; bottom: 20px; }
+
+/* ---------- small tools under the console ---------- */
+.scene__tools {
+  position: absolute; left: 0; right: 0; top: calc(var(--h) + 34px);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font: 8px/1 'Press Start 2P', monospace; color: #9a9a9a;
+}
+.scene__tools button {
+  font: inherit; color: #ddd; background: #3a3a44; border: 2px solid #20202a; border-radius: 4px; padding: 6px 8px; cursor: pointer;
+}
+.scene__tools button:hover { background: #4a4a56; }
+
+/* ---------- motion ---------- */
+@keyframes c3d-bob    { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes c3d-shadow { 0%, 100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(0.92); opacity: 0.8; } }
+@media (prefers-reduced-motion: reduce) {
+  .c3d-float, .scene__shadow { animation: none; }
+  .c3d-body.is-smooth { transition: none; }
+}
+
+/* Centers the 3D scene on the stage. The scale is set inline in App.jsx. */
+.scene-holder { position: absolute; left: 50%; top: 50%; width: 380px; height: 640px; }
+
+/* Inside the 3D scene the console is only the front face, so no flat drop shadow */
+.c3d-front .console { box-shadow: inset 0 0 0 3px #e2ddcb; }

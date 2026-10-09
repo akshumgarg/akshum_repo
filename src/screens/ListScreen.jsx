@@ -1,6 +1,6 @@
-const VISIBLE = 10
+const VISIBLE = 6 // NEW: was 10. The character strip uses 64px of the screen.
 
-// Draws a list with a cursor. Shows only 10 rows and moves them as the cursor moves.
+// Draws a list with a cursor. Shows only 6 rows and moves them as the cursor moves.
 export default function ListScreen({ items, cursor }) {
   if (items.length === 0) {
     return (

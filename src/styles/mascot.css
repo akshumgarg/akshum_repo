@@ -1,0 +1,79 @@
+/* ---------- layout ---------- */
+.mascot__sprite { display: block; image-rendering: pixelated; flex: none; }
+
+/* Boot screen: bubble on top, big character below */
+.mascot--boot { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.mascot--boot .mascot__sprite { width: 96px; height: 96px; }
+.mascot--boot .bubble { max-width: 228px; }
+
+/* Other screens: a 64px strip. Character at the left, bubble at the right */
+.mascot--strip {
+  display: flex; align-items: center; gap: 12px;
+  height: 64px; padding: 0 8px;
+  background: var(--c1);
+}
+.mascot--strip .mascot__sprite { width: 64px; height: 64px; order: -1; }   /* character first (left) */
+.mascot--strip .bubble { max-width: 176px; }
+
+/* ---------- speech bubble ---------- */
+.bubble {
+  position: relative;
+  font-size: 8px; line-height: 12px; color: var(--c3);
+  overflow-wrap: anywhere;
+  animation: bubble-pop 150ms steps(3) both;
+}
+.bubble--tail-left { transform-origin: left center; }
+.bubble--tail-down { transform-origin: center bottom; }
+
+/* the dark frame is made with padding; the light inside sits on top of it */
+.bubble__shape { background: var(--c3); padding: 2px; border-radius: 6px; }
+.bubble__text  { background: var(--c0); padding: 5px 6px; border-radius: 4px; }
+.bubble__ghost { visibility: hidden; }
+
+/* tail: a dark triangle with a smaller light triangle on top */
+.bubble__tail { position: absolute; width: 0; height: 0; border: 5px solid transparent; }
+.bubble__tail::after { content: ""; position: absolute; width: 0; height: 0; border: 3px solid transparent; }
+
+.bubble--tail-left .bubble__tail { left: -9px; top: 50%; margin-top: -5px; border-right-color: var(--c3); border-left-width: 0; }
+.bubble--tail-left .bubble__tail::after { left: 1px; top: -3px; border-right-color: var(--c0); border-left-width: 0; }
+
+.bubble--tail-down .bubble__tail { left: 50%; margin-left: -5px; bottom: -9px; border-top-color: var(--c3); border-bottom-width: 0; }
+.bubble--tail-down .bubble__tail::after { left: -3px; top: -7px; border-top-color: var(--c0); border-bottom-width: 0; }
+
+/* shout: spiky edges */
+.bubble--shout .bubble__shape,
+.bubble--shout .bubble__text {
+  border-radius: 0;
+  clip-path: polygon(0% 12%, 4% 0%, 12% 9%, 22% 0%, 32% 9%, 42% 0%, 52% 9%, 62% 0%, 72% 9%, 82% 0%, 92% 9%, 100% 12%,
+    96% 32%, 100% 50%, 96% 68%, 100% 88%, 92% 100%, 82% 91%, 72% 100%, 62% 91%, 52% 100%, 42% 91%, 32% 100%, 22% 91%,
+    12% 100%, 4% 91%, 0% 88%, 4% 68%, 0% 50%, 4% 32%);
+}
+.bubble--shout .bubble__shape { padding: 3px; }
+.bubble--shout .bubble__text  { padding: 7px 10px; }
+
+/* thought: round cloud with two small circles as the tail */
+.bubble--thought .bubble__shape { border-radius: 14px; }
+.bubble--thought .bubble__text  { border-radius: 12px; padding: 6px 10px; }
+.bubble__dot { position: absolute; background: var(--c3); border-radius: 50%; }
+.bubble__dot--big   { width: 7px; height: 7px; }
+.bubble__dot--small { width: 4px; height: 4px; }
+.bubble--tail-left .bubble__dot--big   { left: -9px;  top: 55%; }
+.bubble--tail-left .bubble__dot--small { left: -15px; top: 80%; }
+.bubble--tail-down .bubble__dot--big   { bottom: -9px;  left: 45%; }
+.bubble--tail-down .bubble__dot--small { bottom: -15px; left: 38%; }
+
+/* mutter: dashed, quiet */
+.bubble--mutter .bubble__shape { background: transparent; padding: 0; }
+.bubble--mutter .bubble__text  { border: 2px dashed var(--c3); }
+
+/* ---------- motion ---------- */
+@keyframes bubble-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bubble { animation: none; }
+}
+
+
+.screen-mascot { flex: none; }
