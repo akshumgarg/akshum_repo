@@ -7,4 +7,6 @@ export const initialState = {
   page: 0,                 // current page on a pages screen (Phase 4)
   settings: { palette: 'green', sound: false },
   view: 'console',         // 'console' or 'plain'
+  konami: 0,               // how many Konami code presses in a row are right so far
+  game: null,              // the Snake game (see state/snake.js)
 }

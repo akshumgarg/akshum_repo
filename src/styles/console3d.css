@@ -117,3 +117,16 @@
 
 /* Inside the 3D scene the console is only the front face, so no flat drop shadow */
 .c3d-front .console { box-shadow: inset 0 0 0 3px #e2ddcb; }
+
+/* QR code in the battery compartment on the back */
+.back__qr {
+  position: absolute;
+  left: 50%;
+  top: 38px;
+  width: 164px;
+  height: 164px;
+  margin-left: -82px;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+}

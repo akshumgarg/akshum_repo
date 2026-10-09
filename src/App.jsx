@@ -3,18 +3,21 @@ import './styles/palettes.css'
 import './styles/console.css'
 import './styles/screen.css'
 import './styles/screens.css'
+import './styles/console3d.css'
 import Console from './components/Console.jsx'
+import Console3D from './components/Console3D.jsx'
 import ScreenView from './components/ScreenView.jsx'
 import PlainView from './components/PlainView.jsx'
 import { useScale } from './hooks/useScale.js'
 import { useInput } from './hooks/useInput.js'
+import { useIdle } from './hooks/useIdle.js' // NEW
+import { useGameTick } from './hooks/useGameTick.js' // NEW
 import { reducer } from './state/reducer.js'
 import { initialState } from './state/initialState.js'
 import { linkForA } from './state/screenRules.js'
+import { snakeSpeed } from './state/snake.js' // NEW
 import { loadSettings, saveSettings } from './state/settingsStorage.js'
 import { playSound, soundForAction } from './audio/sound.js'
-import './styles/console3d.css'
-import Console3D from './components/Console3D.jsx'
 
 const PRESSED_MS = 120
 
@@ -32,6 +35,12 @@ export default function App() {
   const [state, dispatch] = useReducer(reducer, null, init)
   const [pressed, setPressed] = useState(null)
   const timer = useRef(null)
+
+  // NEW: idle character (awake / yawn / sleep) and the Snake timer
+  const idle = useIdle()
+  const game = state.game
+  const playing = state.view === 'console' && topId(state) === 'game' && !!game && !game.over
+  useGameTick(playing, game ? snakeSpeed(game.score) : 150, dispatch)
 
   // Keys and on-screen buttons both end up here.
   const press = useCallback(
@@ -76,17 +85,17 @@ export default function App() {
   return (
     <div className="stage">
       <div className="scene-holder" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
-  <Console3D>
-    <Console
-      palette={state.settings.palette}
-      scale={1}
-      onPress={press}
-      pressed={pressed}
-    >
-      <ScreenView state={state} />
-    </Console>
-  </Console3D>
-</div>
+        <Console3D>
+          <Console
+            palette={state.settings.palette}
+            scale={1}
+            onPress={press}
+            pressed={pressed}
+          >
+            <ScreenView state={state} idle={idle} />
+          </Console>
+        </Console3D>
+      </div>
 
       <button type="button" className="plain-link" onClick={() => dispatch('SHOW_PLAIN')}>
         Skip game: plain view

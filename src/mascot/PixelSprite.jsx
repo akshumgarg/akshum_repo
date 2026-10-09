@@ -1,6 +1,8 @@
 // Draws one frame (a grid of text) as a small SVG picture.
 // Each character in the grid is one pixel: '.' = clear, '0'..'3' = palette shade.
-import { frames } from './frames/character'
+import { frames as baseFrames } from './frames/character'
+import { extraFrames } from './frames/extra'
+const frames = { ...baseFrames, ...extraFrames }
 
 const cache = {}   // frame name -> list of rectangles (built once, then reused)
 

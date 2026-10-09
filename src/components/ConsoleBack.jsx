@@ -1,4 +1,6 @@
 // The back of the console. Only draws, no logic. Edit the words here.
+import QrCode from './QrCode.jsx'
+
 export default function ConsoleBack() {
   return (
     <div className="c3d-back">
@@ -15,7 +17,7 @@ export default function ConsoleBack() {
 
       <div className="back__battery">
         <div className="back__notch" />
-        <div className="back__lines"><i /><i /><i /><i /><i /></div>
+        <QrCode />
         <div className="back__text">NO BATTERIES NEEDED</div>
       </div>
 

@@ -55,6 +55,7 @@ export const screenRules = {
     kind: 'pages',
     title: 'PROJECT',
     mascot: { mood: 'happy' }, // NEW
+    getCartridge: (p) => portfolio.projects?.[p?.index]?.label ?? '', // label shown on the cartridge
     getPages: (p) => portfolio.projects?.[p?.index]?.pages ?? [],
   },
 
@@ -88,6 +89,7 @@ export const screenRules = {
     getItems: (params, settings) => optionItems(settings),
     onSelect: (i, settings) => optionItems(settings)[i]?.effect ?? null,
   },
+  game: { kind: 'game', title: 'SNAKE', mascot: false }, // hidden: opened by the Konami code, not in the menu
 }
 
 // Returns a url if A should open a link on this screen, else null.

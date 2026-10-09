@@ -34,6 +34,9 @@ export const moods = {
   thinking: { bubble: 'thought', steps: [{ frame: 'think1', ms: 900 }, { frame: 'think2', ms: 900 }] },
   point:   { bubble: 'speech', steps: [{ frame: 'point1', ms: 450 }, { frame: 'point2', ms: 450 }] },
   meh:     { bubble: 'mutter', steps: [{ frame: 'meh1', ms: 900 }, { frame: 'meh2', ms: 900 }] },
+  // Idle: yawns once, then sleeps (frames come from frames/extra.js)
+  yawn:  { bubble: 'speech',  steps: [{ frame: 'yawn1', ms: 400 }, { frame: 'yawn2', ms: 1200 }] },
+  sleep: { bubble: 'thought', steps: [{ frame: 'blink', ms: 1300 }, { frame: 'sleep2', ms: 1300 }] },
 }
 
 export const moodNames = Object.keys(moods)
