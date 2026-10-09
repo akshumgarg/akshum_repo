@@ -5,9 +5,15 @@ const DIRECTIONS = [
   { dir: 'right', label: 'Right', action: 'RIGHT' },
 ]
 
+// The four empty spans are the layers of the cross that make its thickness (see console3d.css).
 export default function Dpad({ onPress, pressed }) {
+  const down = DIRECTIONS.some((d) => d.action === pressed)
   return (
-    <div className="dpad">
+    <div className={`dpad${down ? ' is-down' : ''}`}>
+      <span className="btn-layer btn-layer--0" aria-hidden="true" />
+      <span className="btn-layer btn-layer--1" aria-hidden="true" />
+      <span className="btn-layer btn-layer--2" aria-hidden="true" />
+      <span className="btn-layer btn-layer--3" aria-hidden="true" />
       {DIRECTIONS.map(({ dir, label, action }) => (
         <button
           key={dir}

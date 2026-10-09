@@ -1,9 +1,14 @@
 // Used for A and B. The label is also the action name.
+// The three empty spans are the layers under the button that make its thickness (see console3d.css).
 export default function RoundButton({ label, x, y, onPress, pressed }) {
+  const down = pressed === label
   return (
-    <div className="round" style={{ left: x, top: y }}>
+    <div className={`round${down ? ' is-down' : ''}`} style={{ left: x, top: y }}>
+      <span className="btn-layer btn-layer--0" aria-hidden="true" />
+      <span className="btn-layer btn-layer--1" aria-hidden="true" />
+      <span className="btn-layer btn-layer--2" aria-hidden="true" />
       <button
-        className={`round-btn${pressed === label ? ' is-pressed' : ''}`}
+        className={`round-btn${down ? ' is-pressed' : ''}`}
         aria-label={`${label} button`}
         tabIndex={-1}
         onPointerDown={() => onPress(label)}

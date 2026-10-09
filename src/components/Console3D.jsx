@@ -1,18 +1,69 @@
 // Puts the console in 3D space.
 //   Drag with mouse or finger = rotate.   F = flip to the other side.   R = back to the front.
-// The front face is your normal <Console /> (it comes in as children).
-// The back face is <ConsoleBack />. The thickness is made of thin layers ("slices").
+// The front face is your normal <Console /> (it comes in as children). The back face is <ConsoleBack />.
+// The thickness is a solid prism: thin side faces computed from the console outline (a few dozen tiny layers,
+// instead of dozens of full-size ones, so phones can draw it).
 import { useCallback, useEffect, useRef } from 'react'
 import ConsoleBack from './ConsoleBack.jsx'
 
-const DEPTH = 36     // thickness in px. Must match --depth in console3d.css
-const SLICES = 30    // thin layers that make the rounded side of the body
-const MAX_TILT = 40  // how far you can tilt up and down (degrees)
+const W = 380            // console size. Must match console.css and --w / --h in console3d.css
+const H = 640
+const DEPTH = 36         // thickness in px. Must match --depth in console3d.css
+const RADII = { tl: 14, tr: 14, br: 70, bl: 14 } // corner sizes. Must match console.css (14px 14px 70px 14px)
+const MAX_TILT = 40      // how far you can tilt up and down (degrees)
+const SIDE_RGB = [179, 174, 155] // side color, #b3ae9b
 
-// z position of each slice, from the back to the front
-const SLICE_Z = Array.from({ length: SLICES }, (_, i) => -DEPTH / 2 + ((i + 1) * DEPTH) / (SLICES + 1))
+// Points along a corner arc (angles in degrees, y points down like on the screen)
+function arc(cx, cy, r, fromDeg, toDeg, steps) {
+  const pts = []
+  for (let i = 0; i <= steps; i++) {
+    const a = ((fromDeg + ((toDeg - fromDeg) * i) / steps) * Math.PI) / 180
+    pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)])
+  }
+  return pts
+}
 
-// Puts the angles on the element. smooth = move with an animation.
+// One thin wall per piece of the outline. Walked counter-clockwise, so each wall faces outward.
+function buildSides() {
+  const { tl, tr, br, bl } = RADII
+  const raw = [
+    [0, tl],
+    [0, H - bl],
+    ...arc(bl, H - bl, bl, 180, 90, 4),
+    ...arc(W - br, H - br, br, 90, 0, 10),
+    ...arc(W - tr, tr, tr, 0, -90, 4),
+    ...arc(tl, tl, tl, -90, -180, 4),
+  ]
+  // drop points that repeat
+  const pts = raw.filter((p, i) => i === 0 || Math.hypot(p[0] - raw[i - 1][0], p[1] - raw[i - 1][1]) > 0.01)
+  const first = pts[0]
+  const last = pts[pts.length - 1]
+  if (Math.hypot(first[0] - last[0], first[1] - last[1]) < 0.01) pts.pop()
+
+  return pts.map((p0, i) => {
+    const p1 = pts[(i + 1) % pts.length]
+    const dx = p1[0] - p0[0]
+    const dy = p1[1] - p0[1]
+    const len = Math.hypot(dx, dy)
+    const deg = (Math.atan2(dy, dx) * 180) / Math.PI
+    // light from the top left: walls facing up or left are brighter, down or right darker
+    const nx = -dy / len
+    const ny = dx / len
+    const f = 0.86 + 0.16 * (nx * -0.55 + ny * -0.8)
+    const rgb = SIDE_RGB.map((c) => Math.round(Math.min(255, c * f)))
+    return {
+      key: i,
+      style: {
+        width: `${(len + 0.6).toFixed(2)}px`, // a hair longer, so neighbours never leave a crack
+        transform: `translate3d(${p0[0].toFixed(2)}px, ${p0[1].toFixed(2)}px, ${DEPTH / 2}px) rotateZ(${deg.toFixed(3)}deg) rotateX(-90deg)`,
+        background: `rgb(${rgb.join(',')})`,
+      },
+    }
+  })
+}
+
+const SIDES = buildSides() // built once
+
 // Puts the angles on the element. smooth = move with an animation.
 function paint(el, angles, smooth) {
   const rad = (deg) => (deg * Math.PI) / 180
@@ -106,14 +157,9 @@ export default function Console3D({ children }) {
 
       <div className="c3d-float">
         <div className="c3d-body" ref={bodyRef}>
-          {SLICE_Z.map((z) => (
-            <div key={z} className="c3d-slice" style={{ transform: `translateZ(${z}px)` }} />
+          {SIDES.map((s) => (
+            <div key={s.key} className="c3d-side" style={s.style} />
           ))}
-          {/* flat walls so the edge never disappears when seen exactly from the side */}
-          <div className="c3d-wall c3d-wall--left" />
-          <div className="c3d-wall c3d-wall--right" />
-          <div className="c3d-wall c3d-wall--top" />
-          <div className="c3d-wall c3d-wall--bottom" />
 
           <div className="c3d-front">{children}</div>
           <ConsoleBack />
